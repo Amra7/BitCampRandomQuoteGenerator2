@@ -18,43 +18,47 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
-
+/**
+ * Class users provides connection clients on server.
+ * @author amrapoprzanovic
+ *
+ */
 public class User {
 
 	public static final String serverAddress = "127.0.0.1";
 	public static final int PORT = 1717;
 
+	/**
+	 * Connests client to server.
+	 */
 	public static void connectToServer() {
 		try {
 			Socket client = new Socket(serverAddress, PORT);
-//			SocketReadWrite srw = new SocketReadWrite(client.getInputStream(),
-//					client.getOutputStream());
-			Scanner scan = new Scanner(System.in);
-			
+
+		
 			InputStream is = client.getInputStream();
 			Reader r = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(r);
+			Scanner scan = new Scanner(System.in);
 			
 			OutputStream os = client.getOutputStream();
-			Writer w = new OutputStreamWriter(os);
-			BufferedWriter bw = new BufferedWriter(w);
-			PrintWriter pw = new PrintWriter(bw);
+//			Writer w = new OutputStreamWriter(os);
+//			BufferedWriter bw = new BufferedWriter(w);
+//			PrintWriter pw = new PrintWriter(bw);
 
-			while (true) {
-//				String msgServer = srw.getMessage();
-	//			System.out.println("Server: " + msgServer);
-				
-				
-				String msgClient = br.readLine();
-				String pass = scan.nextLine();
-		    	pw.write(pass);
+				System.out.println("Enter password: ");
+			
+				String pass = scan.nextLine()+"\n";
+		    	os.write(pass.getBytes());
+		    	os.flush();
+		    	client.shutdownOutput();
 		
-				pw.flush();
+				
 				// kada se korisnik loguje dobije od Servera quote i onda je upisuje u recieved_quotes.txt file
 			    String serverQuote = br.readLine();
 			    writeToFile(serverQuote);
 				client.close();
-			}
+		
 
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -66,7 +70,13 @@ public class User {
 
 	}
 	
-
+ 
+	/**
+	 * Writes to new File (uth_log.txt) random quotes that are given from
+	 * another File (quotes.txt). Takes one parameter given stringQuote
+	 * 
+	 * @param stringQuote - String quote that is given from readQote method.
+	 */
 	public static void writeToFile(String stringQuote) {
 
 		File recievedQuotes = new File( "./TXT/recieved_quotes.txt");
@@ -92,8 +102,12 @@ public class User {
 		}
 	}
 
+	/**
+	 * Main method that starts  connection client to server.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		connectToServer();
-	}
-}
+	} // end of main
+} //end of class

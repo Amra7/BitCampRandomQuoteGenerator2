@@ -21,11 +21,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
+/**
+ * Server class creates server and connects to the clients.
+ * 
+ * @author amrapoprzanovic
+ *
+ */
 public class Generator {
 
 	public static final int PORT = 1717;
 	private static final String pass = "4567";
 
+	/**
+	 * Method that starts server and connects to client.
+	 */
 	public static void startServer() {
 
 		try {
@@ -38,18 +47,17 @@ public class Generator {
 				InputStream is = client.getInputStream();
 				Reader r = new InputStreamReader(is);
 				BufferedReader br = new BufferedReader(r);
-				Scanner scan = new Scanner(br);
 
 				OutputStream os = client.getOutputStream();
 				Writer w = new OutputStreamWriter(os);
 				BufferedWriter bw = new BufferedWriter(w);
 				PrintWriter pw = new PrintWriter(bw);
 
-				while (true) {
-					System.out.println("Enter your pasword: ");
-					String msg = scan.nextLine();
-					System.out.println("ovdje stane!");
-					if (scan.nextLine().equals(pass)) {
+				String line = "";
+
+				while ((line = br.readLine()) != null) {
+					System.out.println(line);
+					if (line.equals(pass)) {
 						System.out.println("Password is correct!");
 						String quote = readQuotes();
 						pw.write(quote);
@@ -62,6 +70,7 @@ public class Generator {
 					}
 
 				}
+
 			}
 
 		} catch (IOException e) {
@@ -70,6 +79,11 @@ public class Generator {
 		}
 	}
 
+	/**
+	 * Method that reads random line quote form file.
+	 * 
+	 * @return quote line from file written in String.
+	 */
 	private static String readQuotes() {
 		String quote = "";
 		int random = (int) (1 + Math.random() * 15);
@@ -96,22 +110,24 @@ public class Generator {
 		return quote;
 	}
 
+	/**
+	 * Writes to new File (uth_log.txt) random quotes that are given from
+	 * another File (quotes.txt). Takes one parameter given stringQuote
+	 * 
+	 * @param stringQuote - String quote that is given from readQote method.
+	 */
 	private static void writeToFile(String stringQuote) {
 
 		File authLog = new File("./TXT/auth_log.txt");
-		// FileOutputStream fos;
+
 		try {
-			// fos = new FileOutputStream (authLog);
+
 			FileWriter fr = new FileWriter(authLog, true);
-			StringBuilder sb = new StringBuilder();
 
 			SimpleDateFormat sdf = new SimpleDateFormat(
 					"[ yyyy-MM-dd  H:mm:ss ]");
 			Date date = new Date();
 			String enterDate = sdf.format(date);
-
-			// fos.write(enterDate.getBytes());
-			// fos.write(stringQuote.getBytes());
 
 			fr.write(enterDate.toString());
 			fr.write(stringQuote + "\n");
@@ -127,9 +143,15 @@ public class Generator {
 		}
 	}
 
+	/**
+	 * Main method that starts server.
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		startServer();
 
-	}
-}
+	} // end of main method
+
+} // end of class
